@@ -16,7 +16,7 @@ public class InventoryMovementEntity {
 
     private long id;
     private ProductEntity productEntity;
-    private String type; // entry or exit
+    private String type;
     private int quantity;
     private LocalDate date;
 
