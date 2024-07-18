@@ -15,16 +15,19 @@ public class ReservationService {
         this.reservationRepository = reservationRepository;
     }
 
-    public Optional<Reservation> getReservationtById(long id) {
-        return Optional.of(new Reservation());
+
+    public void createReservation(Reservation reservation) {
+
+        reservationRepository.save(reservation);
     }
 
-    public Reservation createReservation(Reservation reservation) {
-        return new Reservation();
-    }
+    public void cancelReservation(long id) {
 
-    public Reservation updateReservation(Reservation reservation) {
-        return new Reservation();
+        Optional<Reservation> reservationOptional = reservationRepository.findReservationById(id);
+        if(reservationOptional.isPresent()){
+            Reservation reservation = reservationOptional.get();
+            reservation.setStatus("CANCEL");
+            reservationRepository.update(reservation);
+        }
     }
-
 }

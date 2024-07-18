@@ -20,5 +20,5 @@ public class Reservation {
     private int quantity;
     private Customer customer;
     private LocalDate reservationDate;
-    private String status; // e.g., "pending", "confirmed", "cancelled"
+    private String status;
 }

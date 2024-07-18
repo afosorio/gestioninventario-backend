@@ -2,15 +2,13 @@ package com.co.flypass.gestioninventario.controller;
 
 import com.co.flypass.gestioninventario.application.ProductService;
 import com.co.flypass.gestioninventario.domain.product.Product;
-import com.co.flypass.gestioninventario.exception.NoDataFoundException;
-import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/product")
+    @RequestMapping("/product")
 public class ProductController {
 
     private final ProductService productService;
@@ -19,26 +17,23 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping
-    public List<Product> getAllProducts() {
-        return productService.getAllProducts();
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable(value = "id") long id) throws NoDataFoundException {
-        Product product = productService.getProductById(id).orElseThrow(() -> new NoDataFoundException("Product not found"));
-        return ResponseEntity.ok().body(product);
-    }
-
     @PostMapping
-    public Product createProduct(@Valid @RequestBody Product product) {
-        return productService.createProduct(product);
+    public void createProduct(@RequestBody Product product) {
+         productService.createProduct(product);
     }
 
     @PutMapping
-    public ResponseEntity<Product> updateProduct(@Valid @RequestBody Product product) {
-        Product updatedProduct = productService.updateProduct(product);
-        return ResponseEntity.ok(updatedProduct);
+    public ResponseEntity<Product> updateProduct(@RequestParam(required = false) final long productId,
+                                                 @RequestParam(required = false) final double price,
+                                                 @RequestParam(required = false) final int quantity) {
+
+        productService.updateProduct(productId, price, quantity);
+        return ResponseEntity.ok(new Product());
+    }
+
+    @GetMapping("all")
+    public List<Product> getAllProducts() {
+        return productService.getAllProducts();
     }
 
     @DeleteMapping("/{id}")
