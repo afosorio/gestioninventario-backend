@@ -18,7 +18,7 @@ public class Product {
     private String name;
     private Category category;
     private double price;
-    private Integer stockQuantity;
+    private int stockQuantity;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private LocalDate createdDate;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

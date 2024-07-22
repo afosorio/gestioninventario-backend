@@ -1,9 +1,8 @@
 package com.co.flypass.gestioninventario.controller;
 
-import com.co.flypass.gestioninventario.application.ReservationService;
+import com.co.flypass.gestioninventario.application.reservation.ReservationService;
 import com.co.flypass.gestioninventario.domain.reservation.Reservation;
 import jakarta.validation.Valid;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

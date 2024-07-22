@@ -1,6 +1,7 @@
 package com.co.flypass.gestioninventario.infrastructure.persistence.reservation;
 
 import com.co.flypass.gestioninventario.domain.product.Product;
+import com.co.flypass.gestioninventario.domain.reservation.EnumReservationStatus;
 import com.co.flypass.gestioninventario.domain.reservation.Reservation;
 import com.co.flypass.gestioninventario.infrastructure.persistence.cateogry.CategoryEntity;
 import com.co.flypass.gestioninventario.infrastructure.persistence.customer.CustomerEntity;
@@ -39,8 +40,8 @@ public class ReservationEntity {
     private LocalDate reservationDate;
 
     @Column(name = "status")
-    private String status;
-
+    @Enumerated(EnumType.STRING)
+    private EnumReservationStatus status;
 
     public static ReservationEntity fromDomain(final Reservation reservation) {
         return new ReservationEntity(
@@ -63,5 +64,4 @@ public class ReservationEntity {
                 this.status
         );
     }
-
 }

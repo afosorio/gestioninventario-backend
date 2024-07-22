@@ -1,4 +1,4 @@
-package com.co.flypass.gestioninventario.application;
+package com.co.flypass.gestioninventario.application.customer;
 
 import com.co.flypass.gestioninventario.domain.customer.CustomerRepository;
 import org.springframework.stereotype.Service;

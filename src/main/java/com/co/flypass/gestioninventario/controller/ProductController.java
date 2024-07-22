@@ -1,6 +1,6 @@
 package com.co.flypass.gestioninventario.controller;
 
-import com.co.flypass.gestioninventario.application.ProductService;
+import com.co.flypass.gestioninventario.application.product.ProductService;
 import com.co.flypass.gestioninventario.domain.product.Product;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +27,7 @@ public class ProductController {
                                                  @RequestParam(required = false) final double price,
                                                  @RequestParam(required = false) final int quantity) {
 
-        productService.updateProduct(productId, price, quantity);
+        productService.updatePriceAndQuantity(productId, price, quantity);
         return ResponseEntity.ok(new Product());
     }
 

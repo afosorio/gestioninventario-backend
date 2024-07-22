@@ -16,7 +16,7 @@ public class InventoryMovement {
 
     private long id;
     private Product product;
-    private String type; // entry or exit
+    private EnumMovementType type;
     private int quantity;
     private LocalDate date;
 

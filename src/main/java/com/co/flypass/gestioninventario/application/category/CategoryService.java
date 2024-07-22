@@ -1,4 +1,4 @@
-package com.co.flypass.gestioninventario.application;
+package com.co.flypass.gestioninventario.application.category;
 
 
 import com.co.flypass.gestioninventario.domain.cateogry.CategoryRepository;
