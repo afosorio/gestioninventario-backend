@@ -1,13 +1,8 @@
 package com.co.flypass.gestioninventario.controller;
 
 import com.co.flypass.gestioninventario.application.inventory.InventoryMovementService;
-import com.co.flypass.gestioninventario.domain.inventorymovement.InventoryMovement;
-import jakarta.validation.Valid;
-import org.springframework.http.ResponseEntity;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Collections;
-import java.util.List;
 
 @RestController
 @RequestMapping("/inventory")
@@ -20,20 +15,8 @@ public class InventoryController {
     }
 
     @GetMapping
-    public List<InventoryMovement> getAllMovements()   {
-        return Collections.EMPTY_LIST;
+    public Response<Object> getAllMovements()   {
+        return new Response<>(HttpServletResponse.SC_OK, "Producto Eliminado");
        // return inventoryMovementService.getAllMovements();
     }
-
-    @PostMapping
-    public InventoryMovement createInventoryMovement(@Valid @RequestBody InventoryMovement reservation) {
-        return inventoryMovementService.createMovement(reservation);
-    }
-
-    @PutMapping
-    public ResponseEntity<InventoryMovement> updateInventory(@Valid @RequestBody InventoryMovement inventoryMovement) {
-       // InventoryMovement updatedInventoryMovement = inventoryMovementService.updateMovement(inventoryMovement);
-        return ResponseEntity.ok(null);
-    }
-
 }

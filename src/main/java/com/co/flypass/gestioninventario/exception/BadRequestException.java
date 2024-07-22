@@ -1,9 +1,11 @@
 package com.co.flypass.gestioninventario.exception;
 
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
+@Getter
 public class BadRequestException extends Exception {
 
     private HttpStatus status;
@@ -14,13 +16,5 @@ public class BadRequestException extends Exception {
         this.status = HttpStatus.BAD_REQUEST;
     }
 
-    public HttpStatus getStatus() {
-        return status;
-    }
-
-
-    public List<String> getErrors() {
-        return errors;
-    }
 
 }
