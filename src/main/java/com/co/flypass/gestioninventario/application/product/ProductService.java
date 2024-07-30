@@ -43,7 +43,7 @@ public class ProductService {
             lock.lock();
             try {
                 productRepository.save(product);
-                inventoryEvents.onNext(new ProductEvent());
+                inventoryEvents.onNext(new ProductEvent(ProductEventType.ADD, product));
             } catch (Exception e) {
                 throw new RuntimeException("Error ", e);
             } finally {
@@ -56,7 +56,6 @@ public class ProductService {
     public void deleteProduct(long productId) {
 
         Product product = productRepository.findProductById(productId).orElseThrow(() -> new AppException("Producto no encontrado"));
-
         if (isProductOutOfStock(product)) {
             CompletableFuture.runAsync(() -> productRepository.delete(productId), threadPool);
         } else {
@@ -68,17 +67,21 @@ public class ProductService {
         return product.getStockQuantity() == 0;
     }
 
-    public void updatePriceAndQuantity(long productId, double price, int quantity)  {
+    public void updatePriceAndQuantity(long productId, double price, int quantity) {
 
-        Product product = productRepository.findProductById(productId)
-                .orElseThrow(() -> new NoDataFoundException("Producto no encontrado"));
+        Product product = getProductById(productId);
 
-        int originalQuantity = product.getStockQuantity();
+        int originalQuantity = getProductById(productId).getStockQuantity();
         product.setStockQuantity(quantity);
         product.setPrice(price);
 
         ProductEventType eventType = quantity < originalQuantity ? ProductEventType.REMOVE : ProductEventType.ADD;
         update(product, eventType);
+    }
+
+    public Product getProductById(long id) {
+        return productRepository.findProductById(id)
+                .orElseThrow(() -> new NoDataFoundException("Producto no encontrado"));
     }
 
     public void addStock(Product product, int quantity) {
@@ -92,22 +95,22 @@ public class ProductService {
     }
 
     @Transactional
-    private void update(Product product, ProductEventType type ) {
+    private void update(Product product, ProductEventType type) {
 
         CompletableFuture.runAsync(() -> {
             lock.lock();
             try {
                 productRepository.update(product);
-                inventoryEvents.onNext(new ProductEvent());
+                inventoryEvents.onNext(new ProductEvent(type, product));
             } finally {
                 lock.unlock();
             }
         }, threadPool).exceptionally(ex -> {
-            throw new AppException("Producto no encontrado", ex);
+            throw new AppException("Ocurrió un error actualizando el producto", ex);
         });
     }
 
-    public List<Product> getAllProducts() {
-        return productRepository.findAllProducts();
+    public CompletableFuture<List<Product>> getAllProducts() {
+        return CompletableFuture.supplyAsync(productRepository::findAllProducts, threadPool);
     }
 }

@@ -22,13 +22,14 @@ public class ReservationService {
     public void createReservation(Reservation reservation) {
         reservation.setStatus(EnumReservationStatus.CONFIRMED);
         reservationRepository.save(reservation);
+        productService.getProductById(reservation.getProduct().getId());
         productService.removeStock(reservation.getProduct(), reservation.getQuantity());
     }
 
     public void cancelReservation(long id) {
 
         Optional<Reservation> reservationOptional = reservationRepository.findReservationById(id);
-        if(reservationOptional.isPresent()){
+        if (reservationOptional.isPresent()) {
             Reservation reservation = reservationOptional.get();
             reservation.setStatus(EnumReservationStatus.CANCELLED);
             reservationRepository.update(reservation);

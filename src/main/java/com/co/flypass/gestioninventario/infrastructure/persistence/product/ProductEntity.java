@@ -3,8 +3,6 @@ package com.co.flypass.gestioninventario.infrastructure.persistence.product;
 import com.co.flypass.gestioninventario.domain.product.Product;
 import com.co.flypass.gestioninventario.infrastructure.persistence.cateogry.CategoryEntity;
 import jakarta.persistence.*;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,7 +27,7 @@ public class ProductEntity {
     @Column(name = "name")
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private CategoryEntity category;
 
     @Column(name = "price")

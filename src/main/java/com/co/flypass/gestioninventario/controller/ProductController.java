@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/product")
@@ -33,7 +34,7 @@ public class ProductController {
     }
 
     @GetMapping("all")
-    public List<Product> getAllProducts() {
+    public CompletableFuture<List<Product>> getAllProducts() {
         return productService.getAllProducts();
     }
 

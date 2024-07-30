@@ -1,8 +1,6 @@
 package com.co.flypass.gestioninventario.application.inventory;
 
 import com.co.flypass.gestioninventario.application.product.ProductService;
-import com.co.flypass.gestioninventario.domain.inventorymovement.EnumMovementType;
-import com.co.flypass.gestioninventario.domain.inventorymovement.InventoryMovement;
 import com.co.flypass.gestioninventario.domain.product.ProductEvent;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import jakarta.annotation.PostConstruct;
@@ -10,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.concurrent.ExecutorService;
 
 @Service
@@ -34,12 +31,7 @@ class InventoryObserverService {
 
     private void procesaRecibido(ProductEvent event) {
 
-        //TODO manejar concurrencia para garantizar orden
-        InventoryMovement inventoryMovement = new InventoryMovement();
-        inventoryMovement.setDate(LocalDate.now());
-        inventoryMovement.setType(EnumMovementType.ENTRY);
-        inventoryMovement.setProduct(event.getProduct());
-        inventoryMovement.setQuantity(event.getProduct().getStockQuantity());
-        inventoryMovementService.createMovement(inventoryMovement);
+        log.info("Evento Recibido : {} - Producto: {}", event.getTypeEvent(),event.getProduct().getName());
+        inventoryMovementService.createMovement(event.getProduct());
     }
 }

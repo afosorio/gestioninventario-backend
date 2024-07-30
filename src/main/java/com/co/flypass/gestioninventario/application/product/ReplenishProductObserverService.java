@@ -4,11 +4,16 @@ import com.co.flypass.gestioninventario.domain.product.Product;
 import com.co.flypass.gestioninventario.domain.product.ProductEvent;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import java.util.concurrent.ExecutorService;
 
+@Service
 class ReplenishProductObserverService {
 
+    private static final Logger log = LoggerFactory.getLogger(ReplenishProductObserverService.class);
     private final ProductService productService;
     private final ExecutorService executorService;
     private static final int  MIN_UMBRAL_QUANTITY = 5;
@@ -24,6 +29,7 @@ class ReplenishProductObserverService {
     }
 
     private void replanishInventory(ProductEvent event) {
+
         if(isLowStock(event.getProduct())){
             productService.addStock(event.getProduct(), 100);
         }
