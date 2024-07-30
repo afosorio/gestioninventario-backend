@@ -33,6 +33,7 @@ public class ReservationService {
             Reservation reservation = reservationOptional.get();
             reservation.setStatus(EnumReservationStatus.CANCELLED);
             reservationRepository.update(reservation);
+            productService.getProductById(reservation.getProduct().getId());
             productService.addStock(reservation.getProduct(), reservation.getQuantity());
         }
     }
