@@ -2,6 +2,7 @@ package com.co.flypass.gestioninventario.infrastructure.persistence.inventorymov
 
 import com.co.flypass.gestioninventario.domain.inventorymovement.EnumMovementType;
 import com.co.flypass.gestioninventario.domain.inventorymovement.InventoryMovement;
+import com.co.flypass.gestioninventario.domain.product.ProductEventType;
 import com.co.flypass.gestioninventario.infrastructure.persistence.product.ProductEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -51,7 +52,7 @@ public class InventoryMovementEntity {
         return new InventoryMovement(
                 this.id,
                 this.product.toDomain(),
-                EnumMovementType.valueOf(this.type),
+                ProductEventType.valueOf(this.type),
                 this.quantity,
                 this.date
         );

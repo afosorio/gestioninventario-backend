@@ -2,7 +2,6 @@ package com.co.flypass.gestioninventario.infrastructure.persistence.reservation;
 
 import com.co.flypass.gestioninventario.domain.reservation.Reservation;
 import com.co.flypass.gestioninventario.domain.reservation.ReservationRepository;
-import com.co.flypass.gestioninventario.infrastructure.persistence.product.ProductEntity;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.stereotype.Repository;

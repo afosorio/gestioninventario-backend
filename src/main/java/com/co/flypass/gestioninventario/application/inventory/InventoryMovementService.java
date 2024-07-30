@@ -1,5 +1,4 @@
 package com.co.flypass.gestioninventario.application.inventory;
-import com.co.flypass.gestioninventario.domain.inventorymovement.EnumMovementType;
 import com.co.flypass.gestioninventario.domain.inventorymovement.InventoryMovement;
 import com.co.flypass.gestioninventario.domain.inventorymovement.InventoryMovementRepository;
 import com.co.flypass.gestioninventario.domain.product.Product;
@@ -47,8 +46,7 @@ public class InventoryMovementService {
         });
     }
 
-
     public List<InventoryMovement> getAll(){
-        return Collections.EMPTY_LIST;
+        return  inventoryMovementRepository.findAllMovements();
     }
 }

@@ -10,8 +10,6 @@ import com.co.flypass.gestioninventario.exception.NoDataFoundException;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import org.springframework.stereotype.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -24,7 +22,6 @@ import java.util.concurrent.locks.ReentrantLock;
 @Service
 public class ProductService {
 
-    private static final Logger log = LoggerFactory.getLogger(ProductService.class);
     private final ProductRepository productRepository;
     private final PublishSubject<ProductEvent> inventoryEvents = PublishSubject.create();
     private final ReentrantLock lock = new ReentrantLock();
