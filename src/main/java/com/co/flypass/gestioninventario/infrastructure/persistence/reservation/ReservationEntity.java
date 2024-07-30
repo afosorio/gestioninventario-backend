@@ -30,7 +30,7 @@ public class ReservationEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private ProductEntity product;
 
-    @Column(name = "name")
+    @Column(name = "quantity")
     private int quantity;
 
     @ManyToOne(fetch = FetchType.LAZY)

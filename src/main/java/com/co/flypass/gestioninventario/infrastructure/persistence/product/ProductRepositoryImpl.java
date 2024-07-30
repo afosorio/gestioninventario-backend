@@ -42,7 +42,7 @@ public interface ProductRepositoryImpl extends ListCrudRepository<ProductEntity,
     }
 
     @Override
-    default Optional<List<Product>> findProducts(Category category, LocalDate startDate, LocalDate endDate) {
+    default Optional<List<Product>> findProducts(int category, LocalDate startDate, LocalDate endDate) {
 
         Specification<ProductEntity> specification = ProductSpecification.get(category, startDate, endDate);
         List<ProductEntity> listEntity = findAll(specification);

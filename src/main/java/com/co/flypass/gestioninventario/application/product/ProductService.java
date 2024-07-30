@@ -43,7 +43,7 @@ public class ProductService {
             lock.lock();
             try {
                 Product saveProduct = productRepository.save(product);
-                inventoryEvents.onNext(new ProductEvent(ProductEventType.ENTRY, saveProduct));
+                inventoryEvents.onNext(new ProductEvent(ProductEventType.ENTRY, saveProduct, product.getStockQuantity()));
             } catch (Exception e) {
                 throw new RuntimeException("Error ", e);
             } finally {
@@ -76,7 +76,7 @@ public class ProductService {
         product.setPrice(price);
 
         ProductEventType eventType = quantity < originalQuantity ? ProductEventType.EXIT : ProductEventType.ENTRY;
-        update(product, eventType);
+        update(product, eventType, quantity);
     }
 
     public Product getProductById(long id) {
@@ -86,22 +86,22 @@ public class ProductService {
 
     public void addStock(Product product, int quantity) {
         product.setStockQuantity(product.getStockQuantity() + quantity);
-        update(product, ProductEventType.ENTRY);
+        update(product, ProductEventType.ENTRY, quantity);
     }
 
     public void removeStock(Product product, int quantity) {
         product.setStockQuantity(product.getStockQuantity() - quantity);
-        update(product, ProductEventType.EXIT);
+        update(product, ProductEventType.EXIT, quantity);
     }
 
     @Transactional
-    private void update(Product product, ProductEventType type) {
+    private void update(Product product, ProductEventType type, int quantity) {
 
         CompletableFuture.runAsync(() -> {
             lock.lock();
             try {
                 productRepository.update(product);
-                inventoryEvents.onNext(new ProductEvent(type, product));
+                inventoryEvents.onNext(new ProductEvent(type, product, quantity));
             } finally {
                 lock.unlock();
             }
@@ -114,7 +114,7 @@ public class ProductService {
         return CompletableFuture.supplyAsync(productRepository::findAllProducts, threadPool);
     }
 
-    public List<Product> getProducts(Category category, LocalDate startDate, LocalDate endDate) {
+    public List<Product> getProducts(int category, LocalDate startDate, LocalDate endDate) {
         Optional<List<Product>> optionalList = productRepository.findProducts(category, startDate, endDate);
         optionalList.orElseThrow(() -> new NoDataFoundException("No se encontraron productos"));
         return optionalList.get();

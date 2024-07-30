@@ -18,5 +18,5 @@ public interface ProductRepository {
 
     List<Product> findAllProducts();
 
-    Optional<List<Product>> findProducts(final Category category, final LocalDate startDate, final LocalDate endDate);
+    Optional<List<Product>> findProducts(final int category, final LocalDate startDate, final LocalDate endDate);
 }

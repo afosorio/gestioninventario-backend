@@ -33,6 +33,6 @@ class InventoryObserverService {
 
         log.info("Evento Recibido : {} - Producto: {}", event.getTypeEvent(),event.getProduct().getName());
 
-        inventoryMovementService.createMovement(event.getProduct(), event.getTypeEvent());
+        inventoryMovementService.createMovement(event.getProduct(), event.getTypeEvent(), event.getQuantity());
     }
 }

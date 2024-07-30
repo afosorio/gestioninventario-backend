@@ -47,7 +47,7 @@ public class ProductController {
     }
 
     @GetMapping("/products")
-    public Response<Object> getProducts(Category category, LocalDate startDate, LocalDate endDate) {
+    public Response<Object> getProducts(int category, LocalDate startDate, LocalDate endDate) {
         return new Response<>(HttpServletResponse.SC_OK, "Productos Encontrados", productService.getProducts(category, startDate, endDate));
     }
 

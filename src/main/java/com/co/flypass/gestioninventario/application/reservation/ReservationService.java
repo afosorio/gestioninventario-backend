@@ -1,6 +1,7 @@
 package com.co.flypass.gestioninventario.application.reservation;
 
 import com.co.flypass.gestioninventario.application.product.ProductService;
+import com.co.flypass.gestioninventario.domain.product.Product;
 import com.co.flypass.gestioninventario.domain.reservation.EnumReservationStatus;
 import com.co.flypass.gestioninventario.domain.reservation.Reservation;
 import com.co.flypass.gestioninventario.domain.reservation.ReservationRepository;
@@ -20,10 +21,11 @@ public class ReservationService {
     }
 
     public void createReservation(Reservation reservation) {
+
+        Product product = productService.getProductById(reservation.getProduct().getId());
         reservation.setStatus(EnumReservationStatus.CONFIRMED);
         reservationRepository.save(reservation);
-        productService.getProductById(reservation.getProduct().getId());
-        productService.removeStock(reservation.getProduct(), reservation.getQuantity());
+        productService.removeStock(product, reservation.getQuantity());
     }
 
     public void cancelReservation(long id) {
@@ -33,8 +35,8 @@ public class ReservationService {
             Reservation reservation = reservationOptional.get();
             reservation.setStatus(EnumReservationStatus.CANCELLED);
             reservationRepository.update(reservation);
-            productService.getProductById(reservation.getProduct().getId());
-            productService.addStock(reservation.getProduct(), reservation.getQuantity());
+            Product product = productService.getProductById(reservation.getProduct().getId());
+            productService.addStock(product, reservation.getQuantity());
         }
     }
 }

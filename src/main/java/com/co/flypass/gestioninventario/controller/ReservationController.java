@@ -19,12 +19,12 @@ public class ReservationController {
     @PostMapping
     public Response<Object> createPReservation(@Valid @RequestBody Reservation reservation) {
         reservationService.createReservation(reservation);
-        return new Response<>(HttpServletResponse.SC_OK, "producto creado exitosamente");
+        return new Response<>(HttpServletResponse.SC_OK, "Reserva creada exitosamente");
     }
 
     @PutMapping
     public Response<Object> cancelReservation(@RequestParam final long id) {
         reservationService.cancelReservation(id);
-        return new Response<>(HttpServletResponse.SC_OK, "Producto Eliminado exitosamente");
+        return new Response<>(HttpServletResponse.SC_OK, "Reserva Cancelada exitosamente");
     }
 }

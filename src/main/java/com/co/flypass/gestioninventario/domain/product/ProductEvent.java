@@ -12,4 +12,5 @@ import lombok.Setter;
 public class ProductEvent {
     private ProductEventType typeEvent;
     private Product product;
+    private int quantity;
 }

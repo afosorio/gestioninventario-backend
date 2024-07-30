@@ -27,7 +27,7 @@ public class InventoryMovementService {
     }
 
     @Transactional
-    public void createMovement(Product product, ProductEventType eventType) {
+    public void createMovement(Product product, ProductEventType eventType, int quantity) {
 
         CompletableFuture.runAsync(() -> {
             lock.lock();
@@ -36,7 +36,7 @@ public class InventoryMovementService {
                 inventoryMovement.setDate(LocalDate.now());
                 inventoryMovement.setType(eventType);
                 inventoryMovement.setProduct(product);
-                inventoryMovement.setQuantity(product.getStockQuantity());
+                inventoryMovement.setQuantity(quantity);
                 inventoryMovementRepository.save(inventoryMovement);
             } finally {
                 lock.unlock();

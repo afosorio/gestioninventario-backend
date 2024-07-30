@@ -2,14 +2,21 @@ package com.co.flypass.gestioninventario.infrastructure.persistence.inventorymov
 
 import com.co.flypass.gestioninventario.domain.inventorymovement.InventoryMovement;
 import com.co.flypass.gestioninventario.domain.inventorymovement.InventoryMovementRepository;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
-public interface InventoryMovementRepositoryImpl extends CrudRepository<InventoryMovementEntity, Long>, InventoryMovementRepository {
+public interface InventoryMovementRepositoryImpl extends ListCrudRepository<InventoryMovementEntity, Long>, InventoryMovementRepository {
 
     @Override
     default void save(InventoryMovement movement) {
         save(InventoryMovementEntity.fromDomain(movement));
+    }
+
+    @Override
+    default List<InventoryMovement> findAllMovements() {
+        return findAll().stream().map(InventoryMovementEntity::toDomain).toList();
     }
 }
