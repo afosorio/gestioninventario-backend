@@ -1,4 +1,6 @@
 package com.co.flypass.gestioninventario.domain;
 
-class Constant {
+public class Constant {
+    public static final  String MESSAGE = "Es obligatorio";
 }
+
