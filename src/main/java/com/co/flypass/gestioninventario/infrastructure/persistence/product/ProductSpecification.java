@@ -18,17 +18,14 @@ public class ProductSpecification {
             List<Predicate> predicates = new ArrayList<>();
 
             if (Objects.nonNull(category)) {
-
-                predicates.add(cb.equal(root.get("document.id"), category.getId()));
+                predicates.add(cb.equal(root.get("category"), category.getId()));
             }
 
-            if (Objects.nonNull(startDate)) {
-                predicates.add(cb.equal(root.get("createdDate"), startDate));
+            if(Objects.nonNull(startDate) && Objects.nonNull(endDate)) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("createdDate"), startDate));
+                predicates.add(cb.lessThanOrEqualTo(root.get("createdDate"), endDate));
             }
 
-            if (Objects.nonNull(endDate) ) {
-                predicates.add(cb.equal(root.get("createdDate"), endDate));
-            }
             return cb.and(predicates.toArray(new Predicate[] {}));
         };
     }

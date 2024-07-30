@@ -3,6 +3,7 @@ import com.co.flypass.gestioninventario.domain.inventorymovement.EnumMovementTyp
 import com.co.flypass.gestioninventario.domain.inventorymovement.InventoryMovement;
 import com.co.flypass.gestioninventario.domain.inventorymovement.InventoryMovementRepository;
 import com.co.flypass.gestioninventario.domain.product.Product;
+import com.co.flypass.gestioninventario.domain.product.ProductEventType;
 import com.co.flypass.gestioninventario.exception.AppException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,16 +28,17 @@ public class InventoryMovementService {
     }
 
     @Transactional
-    public void createMovement(Product product) {
+    public void createMovement(Product product, ProductEventType eventType) {
 
         CompletableFuture.runAsync(() -> {
             lock.lock();
             try {
                 InventoryMovement inventoryMovement = new InventoryMovement();
                 inventoryMovement.setDate(LocalDate.now());
-                inventoryMovement.setType(EnumMovementType.ENTRY);
+                inventoryMovement.setType(eventType);
                 inventoryMovement.setProduct(product);
                 inventoryMovement.setQuantity(product.getStockQuantity());
+                inventoryMovementRepository.save(inventoryMovement);
             } finally {
                 lock.unlock();
             }

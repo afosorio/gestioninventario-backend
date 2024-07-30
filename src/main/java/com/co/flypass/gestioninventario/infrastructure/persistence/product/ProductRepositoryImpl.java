@@ -17,13 +17,13 @@ public interface ProductRepositoryImpl extends ListCrudRepository<ProductEntity,
         JpaSpecificationExecutor<ProductEntity>, ProductRepository {
 
     @Override
-    default void save(Product employee) {
-        save(ProductEntity.fromDomain(employee));
+    default Product save(Product product) {
+       return save(ProductEntity.fromDomain(product)).toDomain();
     }
 
     @Override
-    default void update(Product employee) {
-        save(employee);
+    default void update(Product product) {
+        save(product);
     }
 
     @Override

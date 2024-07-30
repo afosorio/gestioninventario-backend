@@ -1,6 +1,7 @@
 package com.co.flypass.gestioninventario.domain.inventorymovement;
 
 import com.co.flypass.gestioninventario.domain.product.Product;
+import com.co.flypass.gestioninventario.domain.product.ProductEventType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +17,7 @@ public class InventoryMovement {
 
     private long id;
     private Product product;
-    private EnumMovementType type;
+    private ProductEventType type;
     private int quantity;
     private LocalDate date;
 

@@ -1,5 +1,6 @@
 package com.co.flypass.gestioninventario.application.product;
 
+import com.co.flypass.gestioninventario.domain.cateogry.Category;
 import com.co.flypass.gestioninventario.domain.product.Product;
 import com.co.flypass.gestioninventario.domain.product.ProductEvent;
 import com.co.flypass.gestioninventario.domain.product.ProductEventType;
@@ -13,7 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.locks.ReentrantLock;
@@ -42,8 +45,8 @@ public class ProductService {
         CompletableFuture.runAsync(() -> {
             lock.lock();
             try {
-                productRepository.save(product);
-                inventoryEvents.onNext(new ProductEvent(ProductEventType.ADD, product));
+                Product saveProduct = productRepository.save(product);
+                inventoryEvents.onNext(new ProductEvent(ProductEventType.ENTRY, saveProduct));
             } catch (Exception e) {
                 throw new RuntimeException("Error ", e);
             } finally {
@@ -75,7 +78,7 @@ public class ProductService {
         product.setStockQuantity(quantity);
         product.setPrice(price);
 
-        ProductEventType eventType = quantity < originalQuantity ? ProductEventType.REMOVE : ProductEventType.ADD;
+        ProductEventType eventType = quantity < originalQuantity ? ProductEventType.EXIT : ProductEventType.ENTRY;
         update(product, eventType);
     }
 
@@ -86,12 +89,12 @@ public class ProductService {
 
     public void addStock(Product product, int quantity) {
         product.setStockQuantity(product.getStockQuantity() + quantity);
-        update(product, ProductEventType.ADD);
+        update(product, ProductEventType.ENTRY);
     }
 
     public void removeStock(Product product, int quantity) {
         product.setStockQuantity(product.getStockQuantity() - quantity);
-        update(product, ProductEventType.REMOVE);
+        update(product, ProductEventType.EXIT);
     }
 
     @Transactional
@@ -112,5 +115,11 @@ public class ProductService {
 
     public CompletableFuture<List<Product>> getAllProducts() {
         return CompletableFuture.supplyAsync(productRepository::findAllProducts, threadPool);
+    }
+
+    public List<Product> getProducts(Category category, LocalDate startDate, LocalDate endDate) {
+        Optional<List<Product>> optionalList = productRepository.findProducts(category, startDate, endDate);
+        optionalList.orElseThrow(() -> new NoDataFoundException("No se encontraron productos"));
+        return optionalList.get();
     }
 }

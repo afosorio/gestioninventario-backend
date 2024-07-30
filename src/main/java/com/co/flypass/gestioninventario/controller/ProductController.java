@@ -1,10 +1,12 @@
 package com.co.flypass.gestioninventario.controller;
 
 import com.co.flypass.gestioninventario.application.product.ProductService;
+import com.co.flypass.gestioninventario.domain.cateogry.Category;
 import com.co.flypass.gestioninventario.domain.product.Product;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -20,20 +22,20 @@ public class ProductController {
 
     @PostMapping
     public Response<Object> createProduct(@RequestBody Product product) {
-         productService.createProduct(product);
+        productService.createProduct(product);
         return new Response<>(HttpServletResponse.SC_OK, "Producto Creado");
     }
 
     @PutMapping
     public Response<Object> updateProduct(@RequestParam(required = false) final long productId,
-                                                 @RequestParam(required = false) final double price,
-                                                 @RequestParam(required = false) final int quantity) {
+                                          @RequestParam(required = false) final double price,
+                                          @RequestParam(required = false) final int quantity) {
 
         productService.updatePriceAndQuantity(productId, price, quantity);
         return new Response<>(HttpServletResponse.SC_OK, "Producto actualizado");
     }
 
-    @GetMapping("all")
+    @GetMapping("/all")
     public CompletableFuture<List<Product>> getAllProducts() {
         return productService.getAllProducts();
     }
@@ -43,4 +45,10 @@ public class ProductController {
         productService.deleteProduct(id);
         return new Response<>(HttpServletResponse.SC_OK, "Producto Eliminado");
     }
+
+    @GetMapping("/products")
+    public Response<Object> getProducts(Category category, LocalDate startDate, LocalDate endDate) {
+        return new Response<>(HttpServletResponse.SC_OK, "Productos Encontrados", productService.getProducts(category, startDate, endDate));
+    }
+
 }

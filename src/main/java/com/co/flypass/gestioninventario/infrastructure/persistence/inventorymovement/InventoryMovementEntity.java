@@ -1,5 +1,7 @@
 package com.co.flypass.gestioninventario.infrastructure.persistence.inventorymovement;
 
+import com.co.flypass.gestioninventario.domain.inventorymovement.EnumMovementType;
+import com.co.flypass.gestioninventario.domain.inventorymovement.InventoryMovement;
 import com.co.flypass.gestioninventario.infrastructure.persistence.product.ProductEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -34,4 +36,24 @@ public class InventoryMovementEntity {
     @Column(name = "date")
     private LocalDate date;
 
+
+    public static InventoryMovementEntity fromDomain(final InventoryMovement inventoryMovement) {
+        return new InventoryMovementEntity(
+                inventoryMovement.getId(),
+                ProductEntity.fromDomain(inventoryMovement.getProduct()),
+                inventoryMovement.getType().name(),
+                inventoryMovement.getQuantity(),
+                inventoryMovement.getDate()
+        );
+    }
+
+    public InventoryMovement toDomain() {
+        return new InventoryMovement(
+                this.id,
+                this.product.toDomain(),
+                EnumMovementType.valueOf(this.type),
+                this.quantity,
+                this.date
+        );
+    }
 }
