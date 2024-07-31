@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
 
 @Service
 class InventoryObserverService {
@@ -16,9 +16,9 @@ class InventoryObserverService {
     private static final Logger log = LoggerFactory.getLogger(InventoryObserverService.class);
     private final ProductService productService;
     private final InventoryMovementService inventoryMovementService;
-    private final ExecutorService executorService;
+    private final Executor executorService;
 
-    public InventoryObserverService(ProductService productService, InventoryMovementService inventoryMovementService, ExecutorService executorService) {
+    public InventoryObserverService(ProductService productService, InventoryMovementService inventoryMovementService, Executor executorService) {
         this.productService = productService;
         this.inventoryMovementService = inventoryMovementService;
         this.executorService = executorService;
@@ -32,7 +32,6 @@ class InventoryObserverService {
     private void procesaRecibido(ProductEvent event) {
 
         log.info("Evento Recibido : {} - Producto: {}", event.getTypeEvent(),event.getProduct().getName());
-
         inventoryMovementService.createMovement(event.getProduct(), event.getTypeEvent(), event.getQuantity());
     }
 }

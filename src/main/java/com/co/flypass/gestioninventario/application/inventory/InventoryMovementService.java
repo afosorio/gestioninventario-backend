@@ -1,4 +1,5 @@
 package com.co.flypass.gestioninventario.application.inventory;
+
 import com.co.flypass.gestioninventario.domain.inventorymovement.InventoryMovement;
 import com.co.flypass.gestioninventario.domain.inventorymovement.InventoryMovementRepository;
 import com.co.flypass.gestioninventario.domain.product.Product;
@@ -8,29 +9,20 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.locks.ReentrantLock;
 
 @Component
 public class InventoryMovementService {
 
     private final InventoryMovementRepository inventoryMovementRepository;
-    private final ExecutorService threadPool;
-    private final ReentrantLock lock = new ReentrantLock();
 
-    public InventoryMovementService(InventoryMovementRepository inventoryMovementRepository, ExecutorService threadPool) {
+    public InventoryMovementService(InventoryMovementRepository inventoryMovementRepository) {
         this.inventoryMovementRepository = inventoryMovementRepository;
-        this.threadPool = threadPool;
     }
 
     @Transactional
     public void createMovement(Product product, ProductEventType eventType, int quantity) {
 
-        CompletableFuture.runAsync(() -> {
-            lock.lock();
             try {
                 InventoryMovement inventoryMovement = new InventoryMovement();
                 inventoryMovement.setDate(LocalDate.now());
@@ -38,15 +30,13 @@ public class InventoryMovementService {
                 inventoryMovement.setProduct(product);
                 inventoryMovement.setQuantity(quantity);
                 inventoryMovementRepository.save(inventoryMovement);
-            } finally {
-                lock.unlock();
+
+            } catch (Exception ex) {
+                throw new AppException("Ocurrió un error actualizando el producto", ex);
             }
-        }, threadPool).exceptionally(ex -> {
-            throw new AppException("Ocurrió un error actualizando el producto", ex);
-        });
     }
 
-    public List<InventoryMovement> getAll(){
-        return  inventoryMovementRepository.findAllMovements();
+    public List<InventoryMovement> getAll() {
+        return inventoryMovementRepository.findAllMovements();
     }
 }

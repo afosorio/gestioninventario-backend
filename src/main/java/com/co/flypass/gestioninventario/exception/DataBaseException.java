@@ -6,14 +6,13 @@ import org.springframework.http.HttpStatus;
 import java.util.List;
 
 @Getter
-public class BadRequestException extends AppException {
+public class DataBaseException extends AppException {
 
     private HttpStatus status;
     private List<String> errors;
 
-    public BadRequestException(final List<String> errors) {
-        this.errors = errors;
-        this.status = HttpStatus.BAD_REQUEST;
+    public DataBaseException(String message) {
+        super(message);
     }
 
 

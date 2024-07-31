@@ -23,7 +23,7 @@ public class Reservation {
     @NotNull(message =  Constant.MESSAGE)
     private Product product;
 
-    @NotBlank(message =  Constant.MESSAGE)
+    @NotNull(message =  Constant.MESSAGE)
     private int quantity;
 
     @NotNull(message =  Constant.MESSAGE)

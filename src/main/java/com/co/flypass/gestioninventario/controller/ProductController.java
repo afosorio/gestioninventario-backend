@@ -1,10 +1,12 @@
 package com.co.flypass.gestioninventario.controller;
 
 import com.co.flypass.gestioninventario.application.product.ProductService;
-import com.co.flypass.gestioninventario.domain.cateogry.Category;
 import com.co.flypass.gestioninventario.domain.product.Product;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -27,12 +29,13 @@ public class ProductController {
     }
 
     @PutMapping
-    public Response<Object> updateProduct(@RequestParam(required = false) final long productId,
-                                          @RequestParam(required = false) final double price,
-                                          @RequestParam(required = false) final int quantity) {
+    public Mono<ResponseEntity<Object>> updateProduct(@RequestParam(required = false) final long productId,
+                                                      @RequestParam(required = false) final double price,
+                                                      @RequestParam(required = false) final int quantity) {
 
-        productService.updatePriceAndQuantity(productId, price, quantity);
-        return new Response<>(HttpServletResponse.SC_OK, "Producto actualizado");
+        return Mono.fromFuture(() -> productService.updatePriceAndQuantity(productId, price, quantity))
+                .then(Mono.just(ResponseEntity.status(HttpStatus.CREATED).build()))
+                .onErrorResume(ex -> Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()));
     }
 
     @GetMapping("/all")

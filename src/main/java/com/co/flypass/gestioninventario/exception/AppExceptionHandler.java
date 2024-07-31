@@ -3,12 +3,11 @@ package com.co.flypass.gestioninventario.exception;
 import com.co.flypass.gestioninventario.controller.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.context.request.async.AsyncRequestTimeoutException;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class AppExceptionHandler {
@@ -26,14 +25,9 @@ public class AppExceptionHandler {
         return new ResponseEntity<>(responseObject, status);
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Object> exceptionHandlerBean(MethodArgumentNotValidException exception) {
-
-        List<String> errors = exception.getBindingResult().getFieldErrors()
-                .stream()
-                .map(x -> x.getField() + " " + x.getDefaultMessage())
-                .collect(Collectors.toList());
-
-        return buildResponseEntity(new Response<>(new BadRequestException(errors)), HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(AsyncRequestTimeoutException.class)
+    public ResponseEntity<String> handleAsyncRequestTimeoutException(AsyncRequestTimeoutException ex, WebRequest request) {
+        return new ResponseEntity<>("Request timed out. Please try again.", HttpStatus.SERVICE_UNAVAILABLE);
     }
+
 }

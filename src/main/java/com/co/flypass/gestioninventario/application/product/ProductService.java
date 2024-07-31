@@ -1,14 +1,16 @@
 package com.co.flypass.gestioninventario.application.product;
 
-import com.co.flypass.gestioninventario.domain.cateogry.Category;
+import com.co.flypass.gestioninventario.application.category.CategoryService;
 import com.co.flypass.gestioninventario.domain.product.Product;
 import com.co.flypass.gestioninventario.domain.product.ProductEvent;
 import com.co.flypass.gestioninventario.domain.product.ProductEventType;
 import com.co.flypass.gestioninventario.domain.product.ProductRepository;
 import com.co.flypass.gestioninventario.exception.AppException;
+import com.co.flypass.gestioninventario.exception.DataBaseException;
 import com.co.flypass.gestioninventario.exception.NoDataFoundException;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.subjects.PublishSubject;
+import jakarta.persistence.OptimisticLockException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +18,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -23,33 +26,27 @@ import java.util.concurrent.locks.ReentrantLock;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final CategoryService categoryService;
     private final PublishSubject<ProductEvent> inventoryEvents = PublishSubject.create();
     private final ReentrantLock lock = new ReentrantLock();
-    private final ExecutorService threadPool;
+    private final Executor threadPool;
 
     public Observable<ProductEvent> getInventoryEvents() {
         return inventoryEvents;
     }
 
-    public ProductService(ProductRepository productRepository, ExecutorService threadPool) {
+    public ProductService(ProductRepository productRepository, CategoryService categoryService, Executor threadPool) {
         this.productRepository = productRepository;
+        this.categoryService = categoryService;
         this.threadPool = threadPool;
     }
 
     @Transactional
     public void createProduct(Product product) {
 
-        CompletableFuture.runAsync(() -> {
-            lock.lock();
-            try {
-                Product saveProduct = productRepository.save(product);
-                inventoryEvents.onNext(new ProductEvent(ProductEventType.ENTRY, saveProduct, product.getStockQuantity()));
-            } catch (Exception e) {
-                throw new RuntimeException("Error ", e);
-            } finally {
-                lock.unlock();
-            }
-        }, threadPool);
+        categoryService.existCategory(product.getCategory().getId());
+        Product saveProduct = productRepository.save(product);
+        inventoryEvents.onNext(new ProductEvent(ProductEventType.ENTRY, saveProduct, product.getStockQuantity()));
     }
 
     @Transactional
@@ -67,7 +64,7 @@ public class ProductService {
         return product.getStockQuantity() == 0;
     }
 
-    public void updatePriceAndQuantity(long productId, double price, int quantity) {
+    public CompletableFuture<Void> updatePriceAndQuantity(long productId, double price, int quantity) {
 
         Product product = getProductById(productId);
 
@@ -76,7 +73,7 @@ public class ProductService {
         product.setPrice(price);
 
         ProductEventType eventType = quantity < originalQuantity ? ProductEventType.EXIT : ProductEventType.ENTRY;
-        update(product, eventType, quantity);
+        return update(product, eventType, quantity);
     }
 
     public Product getProductById(long id) {
@@ -84,25 +81,30 @@ public class ProductService {
                 .orElseThrow(() -> new NoDataFoundException("Producto no encontrado"));
     }
 
-    public void addStock(Product product, int quantity) {
+    public CompletableFuture<Void> addStock(Product product, int quantity) {
         product.setStockQuantity(product.getStockQuantity() + quantity);
-        update(product, ProductEventType.ENTRY, quantity);
+        return update(product, ProductEventType.ENTRY, quantity);
     }
 
-    public void removeStock(Product product, int quantity) {
+    public CompletableFuture<Void> removeStock(Product product, int quantity) {
         product.setStockQuantity(product.getStockQuantity() - quantity);
-        update(product, ProductEventType.EXIT, quantity);
+        return update(product, ProductEventType.EXIT, quantity);
     }
 
     @Transactional
-    private void update(Product product, ProductEventType type, int quantity) {
+    private CompletableFuture<Void> update(Product product, ProductEventType type, int quantity) {
 
-        CompletableFuture.runAsync(() -> {
+        return CompletableFuture.runAsync(() -> {
             lock.lock();
             try {
                 productRepository.update(product);
                 inventoryEvents.onNext(new ProductEvent(type, product, quantity));
-            } finally {
+
+            }catch (OptimisticLockException exception) {
+                throw new AppException("Ocurrió un error de concurrencia actualizando el producto", exception);
+            }catch (Exception e){
+                throw new AppException("Ocurrió un error actualizando el producto", e);
+            }finally {
                 lock.unlock();
             }
         }, threadPool).exceptionally(ex -> {

@@ -8,17 +8,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
 
 @Service
 class ReplenishProductObserverService {
 
     private static final Logger log = LoggerFactory.getLogger(ReplenishProductObserverService.class);
     private final ProductService productService;
-    private final ExecutorService executorService;
+    private final Executor executorService;
     private static final int  MIN_UMBRAL_QUANTITY = 5;
 
-    ReplenishProductObserverService(ProductService productService, ExecutorService executorService) {
+    ReplenishProductObserverService(ProductService productService, Executor executorService) {
         this.productService = productService;
         this.executorService = executorService;
     }

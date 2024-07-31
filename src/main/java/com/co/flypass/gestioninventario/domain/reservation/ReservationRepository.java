@@ -1,7 +1,5 @@
 package com.co.flypass.gestioninventario.domain.reservation;
 
-import com.co.flypass.gestioninventario.domain.product.Product;
-import com.co.flypass.gestioninventario.infrastructure.persistence.product.ProductEntity;
 
 import java.util.Optional;
 
